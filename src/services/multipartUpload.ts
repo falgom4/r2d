@@ -21,13 +21,16 @@ export class MultipartUploader {
     onProgress?: (progress: UploadProgress) => void,
     signal?: AbortSignal
   ): Promise<void> {
+    // Convertir File a ArrayBuffer para compatibilidad con el navegador
+    const arrayBuffer = await file.arrayBuffer();
+
     const upload = new Upload({
       client: this.client,
       params: {
         Bucket: this.bucketName,
         Key: key,
-        Body: file,
-        ContentType: file.type,
+        Body: new Uint8Array(arrayBuffer),
+        ContentType: file.type || 'application/octet-stream',
       },
       // Configuración para multipart
       queueSize: FILE_LIMITS.concurrentUploads, // Uploads concurrentes

@@ -70,6 +70,21 @@ export async function testConnection(
       };
     }
 
+    // Error CORS (muy común)
+    if (error.message && error.message.includes('Failed to fetch')) {
+      return {
+        success: false,
+        error: '❌ Error de CORS: Tu bucket R2 necesita configuración CORS. Ve a Settings → CORS Policy en tu bucket y agrega http://localhost:3000 a AllowedOrigins',
+      };
+    }
+
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      return {
+        success: false,
+        error: '❌ Error de CORS: Configura CORS en tu bucket R2 para permitir solicitudes desde localhost:3000',
+      };
+    }
+
     return {
       success: false,
       error: error.message || 'Error desconocido al conectar',

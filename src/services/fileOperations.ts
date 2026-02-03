@@ -117,11 +117,14 @@ export class R2FileOperations {
    * Sube un archivo (para archivos pequeños)
    */
   async uploadFile(key: string, file: File | Blob): Promise<void> {
+    // Convertir File/Blob a ArrayBuffer para compatibilidad con el navegador
+    const arrayBuffer = await file.arrayBuffer();
+
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,
-      Body: file,
-      ContentType: file.type,
+      Body: new Uint8Array(arrayBuffer),
+      ContentType: file.type || 'application/octet-stream',
     });
 
     await this.client.send(command);
