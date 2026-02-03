@@ -5,7 +5,7 @@ import { useUI } from '@context/UIContext';
 import { Breadcrumbs } from './Breadcrumbs';
 import { Loading } from '@components/common/Loading';
 import { Button } from '@components/common/Button';
-import { FolderPlus, Upload, Folder, File, Download, Trash2 } from 'lucide-react';
+import { FolderPlus, Upload, Folder, File, Download, Trash2, FolderUp } from 'lucide-react';
 import { formatFileSize, formatDateRelative } from '@utils/formatters';
 import { joinPath } from '@utils/pathUtils';
 import { useR2 } from '@context/R2Context';
@@ -65,6 +65,32 @@ export function FileBrowser() {
     input.click();
   };
 
+  const handleUploadFolder = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    // @ts-ignore - webkitdirectory no está en tipos estándar pero funciona en navegadores modernos
+    input.webkitdirectory = true;
+    // @ts-ignore
+    input.directory = true;
+    input.multiple = true;
+    input.onchange = async (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (!files || files.length === 0) return;
+
+      // Procesar todos los archivos preservando la estructura de carpetas
+      for (const file of Array.from(files)) {
+        // webkitRelativePath contiene la ruta completa desde la carpeta seleccionada
+        // @ts-ignore
+        const relativePath = file.webkitRelativePath || file.name;
+        const key = joinPath(currentPath, relativePath);
+        await addUpload(file, key);
+      }
+
+      await loadFiles(currentPath);
+    };
+    input.click();
+  };
+
   const handleDownload = async (file: FileObject) => {
     if (!urlGenerator) return;
     try {
@@ -113,6 +139,14 @@ export function FileBrowser() {
             onClick={handleUpload}
           >
             Subir Archivos
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={<FolderUp className="w-4 h-4" />}
+            onClick={handleUploadFolder}
+          >
+            Subir Carpeta
           </Button>
         </div>
       </div>
