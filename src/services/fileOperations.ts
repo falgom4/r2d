@@ -8,8 +8,8 @@ import {
   type S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import type { FileObject } from '@types/file.types';
-import type { ListObjectsResponse } from '@types/r2.types';
+import type { FileObject } from '@/types/file.types';
+import type { ListObjectsResponse } from '@/types/r2.types';
 import { isFolder as checkIsFolder } from '@utils/pathUtils';
 import { PRESIGNED_URL_EXPIRATION } from '@utils/constants';
 

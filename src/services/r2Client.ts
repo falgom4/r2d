@@ -1,5 +1,5 @@
 import { S3Client } from '@aws-sdk/client-s3';
-import type { R2Credentials } from '@types/credentials.types';
+import type { R2Credentials } from '@/types/credentials.types';
 
 /**
  * Crea un cliente S3 configurado para Cloudflare R2

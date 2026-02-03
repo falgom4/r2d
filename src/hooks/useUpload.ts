@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useR2 } from '@context/R2Context';
 import { useUI } from '@context/UIContext';
-import type { UploadTask } from '@types/file.types';
+import type { UploadTask } from '@/types/file.types';
 import { MultipartUploader } from '@services/multipartUpload';
 
 export function useUpload() {

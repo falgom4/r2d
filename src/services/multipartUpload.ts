@@ -1,6 +1,6 @@
 import { Upload } from '@aws-sdk/lib-storage';
 import type { S3Client } from '@aws-sdk/client-s3';
-import type { UploadProgress } from '@types/file.types';
+import type { UploadProgress } from '@/types/file.types';
 import { FILE_LIMITS } from '@utils/constants';
 
 /**

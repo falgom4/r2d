@@ -6,7 +6,7 @@ import { Button } from '@components/common/Button';
 import { validateCredentials } from '@utils/validators';
 import { createR2Client, testConnection } from '@services/r2Client';
 import { Shield, Eye, EyeOff, AlertCircle } from 'lucide-react';
-import type { R2Credentials } from '@types/credentials.types';
+import type { R2Credentials } from '@/types/credentials.types';
 
 export function CredentialsModal() {
   const { setCredentials, setAuthState, authState } = useAuth();

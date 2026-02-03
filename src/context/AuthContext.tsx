@@ -5,7 +5,7 @@ import {
   useCallback,
   type ReactNode,
 } from 'react';
-import type { R2Credentials, AuthState } from '@types/credentials.types';
+import type { R2Credentials, AuthState } from '@/types/credentials.types';
 
 interface AuthContextType {
   credentials: R2Credentials | null;

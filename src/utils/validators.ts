@@ -1,7 +1,7 @@
 import type {
   R2Credentials,
   CredentialsValidation,
-} from '@types/credentials.types';
+} from '@/types/credentials.types';
 
 /**
  * Valida las credenciales de R2

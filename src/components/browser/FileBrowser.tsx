@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useFileOperations } from '@hooks/useFileOperations';
 import { useUpload } from '@hooks/useUpload';
 import { useUI } from '@context/UIContext';
@@ -9,7 +9,7 @@ import { FolderPlus, Upload, Folder, File, Download, Trash2 } from 'lucide-react
 import { formatFileSize, formatDateRelative } from '@utils/formatters';
 import { joinPath } from '@utils/pathUtils';
 import { useR2 } from '@context/R2Context';
-import type { FileObject } from '@types/file.types';
+import type { FileObject } from '@/types/file.types';
 
 export function FileBrowser() {
   const { currentPath, setCurrentPath } = useUI();
@@ -17,7 +17,6 @@ export function FileBrowser() {
     useFileOperations();
   const { addUpload } = useUpload();
   const { urlGenerator } = useR2();
-  const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     loadFiles(currentPath);
@@ -33,7 +32,6 @@ export function FileBrowser() {
 
   const handleNavigate = (path: string) => {
     setCurrentPath(path);
-    setSelectedFiles(new Set());
   };
 
   const handleFolderClick = (folderKey: string) => {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useR2 } from '@context/R2Context';
 import { useUI } from '@context/UIContext';
-import type { FileObject } from '@types/file.types';
+import type { FileObject } from '@/types/file.types';
 
 export function useFileOperations() {
   const { operations } = useR2();
