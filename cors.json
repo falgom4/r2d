@@ -1,8 +1,16 @@
 {
   "rules": [
     {
-      "AllowedOrigins": ["http://localhost:3000"],
-      "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"]
+      "AllowedOrigins": [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://r2drive-9ut.pages.dev",
+        "https://*.r2drive-9ut.pages.dev"
+      ],
+      "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"],
+      "AllowedHeaders": ["*"],
+      "ExposeHeaders": ["ETag"],
+      "MaxAgeSeconds": 3600
     }
   ]
 }
