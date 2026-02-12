@@ -57,13 +57,13 @@ export function useFileOperations() {
     }
   };
 
-  const renameFile = async (oldKey: string, newKey: string) => {
+  const rename = async (oldKey: string, newKey: string) => {
     if (!operations) return;
     try {
       await operations.moveObject(oldKey, newKey);
-      addToast('Archivo renombrado correctamente', 'success');
+      addToast('Renombrado correctamente', 'success');
     } catch (error: any) {
-      addToast(error.message || 'Error al renombrar archivo', 'error');
+      addToast(error.message || 'Error al renombrar', 'error');
       throw error;
     }
   };
@@ -75,6 +75,6 @@ export function useFileOperations() {
     deleteFile,
     deleteFolder,
     createFolder,
-    renameFile,
+    rename,
   };
 }

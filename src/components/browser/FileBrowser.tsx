@@ -1,11 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFileOperations } from '@hooks/useFileOperations';
 import { useUpload } from '@hooks/useUpload';
 import { useUI } from '@context/UIContext';
 import { Breadcrumbs } from './Breadcrumbs';
 import { Loading } from '@components/common/Loading';
 import { Button } from '@components/common/Button';
-import { FolderPlus, Upload, Folder, File, Download, Trash2, FolderUp } from 'lucide-react';
+import { Modal } from '@components/common/Modal';
+import { Input } from '@components/common/Input';
+import { FolderPlus, Upload, Folder, File, Download, Trash2, FolderUp, Pencil } from 'lucide-react';
 import { formatFileSize, formatDateRelative } from '@utils/formatters';
 import { joinPath } from '@utils/pathUtils';
 import { useR2 } from '@context/R2Context';
@@ -13,10 +15,15 @@ import type { FileObject } from '@/types/file.types';
 
 export function FileBrowser() {
   const { currentPath, setCurrentPath } = useUI();
-  const { listFiles, loading, files, deleteFile, deleteFolder, createFolder } =
+  const { listFiles, loading, files, deleteFile, deleteFolder, createFolder, rename } =
     useFileOperations();
   const { addUpload } = useUpload();
   const { urlGenerator } = useR2();
+
+  const [renameTarget, setRenameTarget] = useState<FileObject | null>(null);
+  const [renameName, setRenameName] = useState('');
+  const [renameError, setRenameError] = useState('');
+  const [renameLoading, setRenameLoading] = useState(false);
 
   useEffect(() => {
     loadFiles(currentPath);
@@ -119,6 +126,47 @@ export function FileBrowser() {
     }
   };
 
+  const handleRenameOpen = (file: FileObject) => {
+    setRenameTarget(file);
+    setRenameName(file.name);
+    setRenameError('');
+  };
+
+  const handleRenameClose = () => {
+    setRenameTarget(null);
+    setRenameName('');
+    setRenameError('');
+  };
+
+  const handleRenameConfirm = async () => {
+    if (!renameTarget || !rename) return;
+
+    const trimmed = renameName.trim();
+    if (!trimmed) {
+      setRenameError('El nombre no puede estar vacío');
+      return;
+    }
+    if (trimmed === renameTarget.name) {
+      handleRenameClose();
+      return;
+    }
+
+    const newKey = renameTarget.isFolder
+      ? joinPath(currentPath, trimmed) + '/'
+      : joinPath(currentPath, trimmed);
+
+    setRenameLoading(true);
+    try {
+      await rename(renameTarget.key, newKey);
+      handleRenameClose();
+      await loadFiles(currentPath);
+    } catch (error) {
+      console.error('Error renaming:', error);
+    } finally {
+      setRenameLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="border-b border-border bg-surface p-4 space-y-4">
@@ -208,6 +256,13 @@ export function FileBrowser() {
                         </button>
                       )}
                       <button
+                        onClick={() => handleRenameOpen(file)}
+                        className="p-1 hover:bg-surface rounded text-text-muted hover:text-accent transition-colors"
+                        title="Renombrar"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={() => handleDelete(file)}
                         className="p-1 hover:bg-surface rounded text-text-muted hover:text-error transition-colors"
                         title="Eliminar"
@@ -222,6 +277,31 @@ export function FileBrowser() {
           </table>
         )}
       </div>
+
+      <Modal
+        isOpen={renameTarget !== null}
+        onClose={handleRenameClose}
+        title={`Renombrar ${renameTarget?.isFolder ? 'carpeta' : 'archivo'}`}
+        size="sm"
+      >
+        <div className="flex flex-col gap-4">
+          <Input
+            label="Nuevo nombre"
+            value={renameName}
+            onChange={(v) => { setRenameName(v); setRenameError(''); }}
+            placeholder="Escribe el nuevo nombre"
+            error={renameError}
+          />
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" size="sm" onClick={handleRenameClose} disabled={renameLoading}>
+              Cancelar
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleRenameConfirm} disabled={renameLoading}>
+              {renameLoading ? 'Renombrando...' : 'Renombrar'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
